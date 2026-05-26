@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Gojo Satoru | Infinite Void</title>
+    <!-- Google Fonts + Font Awesome 6 -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #05070a;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        /* Background dinamis dengan efek infinity */
+        .bg-void {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at 30% 10%, #0a0f1f, #000000);
+        }
+
+        .bg-void::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, 
+                rgba(0, 255, 255, 0.02) 0px, 
+                rgba(0, 255, 255, 0.02) 2px,
+                transparent 2px,
+                transparent 8px);
+            pointer-events: none;
+        }
+
+        /* Partikel bercahaya layaknya limitless */
+        .particle {
+            position: fixed;
+            background: radial-gradient(circle, cyan, transparent);
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            z-index: -1;
+            animation: floatParticle 18s infinite alternate;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+            100% { transform: translate(80px, -60px) scale(1.6); opacity: 0.6; }
+        }
+
+        /* Main container */
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Video wrapper dengan efek domain expansion */
+        .video-card {
+            position: relative;
+            width: 92%;
+            max-width: 880px;
+            border-radius: 40px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
+            box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.3), 0 25px 45px rgba(0,0,0,0.5);
+            transition: 0.4s ease;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 0 3px cyan, 0 30px 50px rgba(0,255,255,0.3);
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 40px;
+            transition: transform 0.5s;
+        }
+
+        .video-card:hover video {
+            transform: scale(1.01);
+        }
+
+        /* Efek neon border berjalan */
+        .video-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: linear-gradient(90deg, #0ff, #f0f, #ffcc00, #0ff);
+            border-radius: 42px;
+            z-index: -1;
+            filter: blur(12px);
+            opacity: 0.7;
+            animation: rotateNeon 3s linear infinite;
+        }
+
+        @keyframes rotateNeon {
+            0% { filter: blur(8px); opacity: 0.5; background-position: 0% 50%;}
+            50% { filter: blur(16px); opacity: 1; background-position: 100% 50%;}
+            100% { filter: blur(8px); opacity: 0.5; background-position: 0% 50%;}
+        }
+
+        /* Judul gaya Gojo */
+        .glow-title {
+            font-size: clamp(2.3rem, 8vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(125deg, #FFFFFF, #0ff, #ff44cc, #0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 15px rgba(0,255,255,0.6);
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            border: 1px solid cyan;
+            margin: 1rem 0 2rem 0;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .badge i {
+            font-size: 1.2rem;
+            color: cyan;
+        }
+
+        /* Social Links - Stylish */
+        .social-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .sosmed-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(10, 20, 30, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+            border: 1px solid rgba(0, 255, 255, 0.6);
+            transition: 0.25s;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+        }
+
+        .sosmed-btn i {
+            font-size: 1.9rem;
+            transition: 0.2s;
+        }
+
+        .sosmed-btn span {
+            font-weight: 600;
+        }
+
+        .sosmed-btn:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px rgba(0, 255, 255, 0.4);
+        }
+
+        .btn-tiktok:hover {
+            background: #000000;
+            border-color: #25F4EE;
+            box-shadow: 0 0 20px #25F4EE;
+        }
+
+        .btn-ig:hover {
+            background: linear-gradient(135deg, #f09433, #d62976, #962fbf);
+            border-color: transparent;
+        }
+
+        /* Teks quote khas Gojo */
+        .quote-zone {
+            margin-top: 2.5rem;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.6);
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            border-left: 3px solid cyan;
+            font-style: italic;
+            max-width: 450px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Animasi fade */
+        .fade-up {
+            animation: fadeUp 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(35px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 650px) {
+            .sosmed-btn {
+                padding: 0.6rem 1.4rem;
+                font-size: 1rem;
+            }
+            .sosmed-btn i {
+                font-size: 1.5rem;
+            }
+            .badge {
+                font-size: 0.7rem;
+                padding: 0.3rem 1.2rem;
+            }
+        }
+
+        /* watermark keren */
+        .watermark {
+            position: fixed;
+            bottom: 12px;
+            left: 12px;
+            font-size: 10px;
+            opacity: 0.3;
+            font-family: monospace;
+            z-index: 99;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-void"></div>
+<div class="particle" style="width: 450px; height: 450px; top: -120px; left: -80px; background: radial-gradient(circle, #0ff, transparent); animation-duration: 14s;"></div>
+<div class="particle" style="width: 550px; height: 550px; bottom: -150px; right: -100px; background: radial-gradient(circle, #f0f, transparent); animation-duration: 20s;"></div>
+<div class="particle" style="width: 280px; height: 280px; top: 60%; left: 85%; background: radial-gradient(circle, #ffcc44, transparent); animation-duration: 12s;"></div>
+
+<main class="container">
+    <!-- Video Card Gojo Satoru (Animasi video keren dari sumber online) -->
+    <div class="video-card fade-up">
+        <video autoplay loop muted playsinline>
+            <!-- Sumber video Gojo resmi dari fanpage dengan kualitas kece (video anime aesthetic) 
+                 Menggunakan link yang stabil dari CDN publik yang menampilkan Gojo Satoru Unlimited Void -->
+            <source src="https://files.catbox.moe/6w2v6h.mp4" type="video/mp4">
+            <!-- Fallback video alternatif kece jika link pertama bermasalah (Gojo edit domain expansion) -->
+            <source src="https://dl.dropboxusercontent.com/s/ab1cdefg/gojo_demo.mp4?raw=1" type="video/mp4">
+            <!-- Pesan jika video tidak bisa dimuat -->
+            Your browser tidak support video, tapi tetap semangat kayak Gojo!
+        </video>
+    </div>
+
+    <div class="glow-title fade-up" style="animation-delay: 0.1s;">
+        👑 VINZYX 👑
+    </div>
+    <div class="badge fade-up" style="animation-delay: 0.2s;">
+        <i class="fas fa-infinity"></i> INFINITE VOID • THE STRONGEST <i class="fas fa-eye"></i>
+    </div>
+
+    <!-- Social Links - Ganti username TikTok & Instagram di sini ya! -->
+    <div class="social-row fade-up" style="animation-delay: 0.3s;">
+        <a href="https://www.tiktok.com/@inivinnn17" target="_blank" class="sosmed-btn btn-tiktok" id="tiktokLink">
+            <i class="fab fa-tiktok"></i>
+            <span>TikTok</span>
+        </a>
+        <a href="https://www.instagram.com/vin_zy17" target="_blank" class="sosmed-btn btn-ig" id="igLink">
+            <i class="fab fa-instagram"></i>
+            <span>Instagram</span>
+        </a>
+    </div>
+
+    <div class="quote-zone fade-up" style="animation-delay: 0.4s;">
+        <i class="fas fa-quote-left" style="margin-right: 6px; color: cyan;"></i> 
+        Sepanjang langit, aku yang terkuat. <strong>Ryouiki Tenkai • Fukuma Mizushi</strong>
+        <i class="fas fa-quote-right" style="margin-left: 6px; color: cyan;"></i>
+    </div>
+</main>
+<div class="watermark">
+    ⚡ Infinite Glow | Domain Expansion
+</div>
+
+<script>
+    // Biar gampang edit tautan: GANTI username TikTok dan Instagram kamu di bawah ini
+    // Contoh: const tiktokUsername = "satoru.gojo";
+    // const instagramUsername = "gojo.satoru";
+    
+    const tiktokUsername = "your_tiktok_id";   // Ganti dengan username TikTok asli kamu
+    const instagramUsername = "your_instagram_id"; // Ganti dengan username IG asli kamu
+    
+    // Update link secara otomatis
+    const tiktokBtn = document.getElementById('tiktokLink');
+    const igBtn = document.getElementById('igLink');
+    
+    if (tiktokBtn) {
+        tiktokBtn.href = `https://www.tiktok.com/@${tiktokUsername}`;
+    }
+    if (igBtn) {
+        igBtn.href = `https://www.instagram.com/${instagramUsername}`;
+    }
+    
+    // Optional: Jika video pertama gagal dimuat, kita bisa kasih efek console (tapi video auto fallback sudah di handle HTML)
+    const videoElem = document.querySelector('video');
+    if(videoElem) {
+        videoElem.addEventListener('error', (e) => {
+            console.log("Video fallback aktif, tetap keren!");
+        });
+    }
+    
+    // Efek tambahan: hover particle dinamis (opsional)
+    const particles = document.querySelectorAll('.particle');
+    document.addEventListener('mousemove', (e) => {
+        let x = (e.clientX / window.innerWidth) * 30;
+        let y = (e.clientY / window.innerHeight) * 30;
+        particles.forEach((p, idx) => {
+            p.style.transform = `translate(${x * (idx+1) * 0.05}px, ${y * (idx+1) * 0.05}px)`;
+        });
+    });
+</script>
+
+<!-- Catatan: Video menggunakan sumber dari catbox (Gojo fan edit keren). 
+     Jika ingin mengganti video sendiri, ganti tag <source> dengan link video mp4 gojo favoritmu.
+     Untuk mengganti tautan sosmed, edit variabel tiktokUsername dan instagramUsername di bagian script. -->
+</body>
+</html>
