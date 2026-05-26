@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Black Shark Game Space</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0c1a, #000000);
+            font-family: 'Segoe UI', system-ui, monospace;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ffcc, #00aaff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+        .badge {
+            background: #00aaff33;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            border: 1px solid #00aaff;
+        }
+        /* Stat Card */
+        .stats-card {
+            background: rgba(10, 20, 30, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0,255,200,0.3);
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #88aaff;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            font-family: monospace;
+        }
+        .stat-unit {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #223344;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ffcc, #00aaff);
+            border-radius: 10px;
+        }
+        /* Tombol mode */
+        .mode-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .mode-btn {
+            flex: 1;
+            background: #1a2a3a;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .mode-btn.active {
+            background: linear-gradient(90deg, #00ffcc, #00aaff);
+            color: black;
+            box-shadow: 0 0 12px #00ffcc;
+        }
+        /* Game list */
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        .game-item {
+            background: rgba(20,30,45,0.8);
+            border-radius: 20px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid #00ffcc;
+        }
+        .game-icon {
+            width: 44px;
+            height: 44px;
+            background: #ffaa33;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .game-name {
+            flex: 1;
+            font-weight: bold;
+        }
+        .launch-btn {
+            background: #00aaff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+        }
+        /* Floating widget preview */
+        .floating-demo {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #000000aa;
+            backdrop-filter: blur(8px);
+            padding: 10px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            border: 1px solid #00ffcc;
+            display: flex;
+            gap: 12px;
+            z-index: 999;
+        }
+        .floating-demo span {
+            font-size: 18px;
+        }
+        button:active { transform: scale(0.96); }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo">⚡ SHARK GAME SPACE</div>
+    <div class="badge">VINZY • BLACK EDITION</div>
+</div>
+
+<div class="stats-card">
+    <div class="stat-row">
+        <span class="stat-label">🎮 FPS (estimasi)</span>
+        <span class="stat-value" id="fpsValue">0</span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">🌡️ CPU Suhu</span>
+        <span class="stat-value" id="tempValue">0<span class="stat-unit">°C</span></span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">🧠 RAM Usage</span>
+        <span class="stat-value" id="ramValue">0 MB</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="ramFill"></div></div>
+    <div class="stat-row">
+        <span class="stat-label">⚡ CPU Load</span>
+        <span class="stat-value" id="cpuValue">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="cpuFill"></div></div>
+</div>
+
+<div class="mode-buttons">
+    <button class="mode-btn" id="modePerf">🚀 PERFORMANCE</button>
+    <button class="mode-btn" id="modeBal">⚖️ BALANCED</button>
+    <button class="mode-btn" id="modeSave">🔋 POWER SAVE</button>
+</div>
+
+<div style="display: flex; gap: 12px; margin-bottom: 20px;">
+    <button id="gameBoostBtn" style="flex:1; background:#ff5500; border:none; padding:14px; border-radius:40px; color:white; font-weight:bold;">🚀 GAME BOOSTER</button>
+    <button id="dndBtn" style="flex:1; background:#335588; border:none; padding:14px; border-radius:40px; color:white;">🔕 DND</button>
+    <button id="floatBtn" style="flex:1; background:#335588; border:none; padding:14px; border-radius:40px; color:white;">🪄 FLOATING</button>
+</div>
+
+<div style="margin-top: 10px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span>🎮 GAME KU</span>
+        <button id="scanGames" style="background:none; border:1px solid #00ffcc; padding:4px 12px; border-radius:30px;">🔄 Refresh</button>
+    </div>
+    <div id="gameListContainer" class="game-list">
+        <!-- Game list akan muncul di sini -->
+        <div style="text-align:center; color:#aaa;">Tekan Refresh untuk mencari game</div>
+    </div>
+</div>
+
+<!-- floating widget (simulasi) -->
+<div class="floating-demo" id="floatWidget" style="display: none;">
+    <span>🎮</span>
+    <span id="floatFps">0 FPS</span>
+    <span>|</span>
+    <span id="floatTemp">0°C</span>
+</div>
+
+<script>
+    // ---------- DATA SIMULASI HARDWARE ----------
+    let perfMode = "balanced"; // performance, balanced, power_save
+    let dndActive = false;
+    let floatActive = false;
+    let gameList = [];
+
+    // Elemen
+    const fpsSpan = document.getElementById('fpsValue');
+    const tempSpan = document.getElementById('tempValue');
+    const ramSpan = document.getElementById('ramValue');
+    const cpuSpan = document.getElementById('cpuValue');
+    const ramFill = document.getElementById('ramFill');
+    const cpuFill = document.getElementById('cpuFill');
+    const floatWidget = document.getElementById('floatWidget');
+    const floatFps = document.getElementById('floatFps');
+    const floatTemp = document.getElementById('floatTemp');
+
+    // Simulasi update performa
+    function updateStats() {
+        let baseFps = 0, baseTemp = 35, ramUsage = 1200, cpuLoad = 25;
+        if (perfMode === "performance") {
+            baseFps = Math.floor(Math.random() * 25 + 55);  // 55-80 FPS
+            baseTemp = Math.floor(Math.random() * 12 + 38); // 38-50°C
+            ramUsage = Math.floor(Math.random() * 800 + 1000);
+            cpuLoad = Math.floor(Math.random() * 35 + 45);
+        } else if (perfMode === "balanced") {
+            baseFps = Math.floor(Math.random() * 20 + 40); // 40-60 FPS
+            baseTemp = Math.floor(Math.random() * 10 + 32); // 32-42°C
+            ramUsage = Math.floor(Math.random() * 600 + 900);
+            cpuLoad = Math.floor(Math.random() * 30 + 30);
+        } else {
+            baseFps = Math.floor(Math.random() * 15 + 25); // 25-40 FPS
+            baseTemp = Math.floor(Math.random() * 8 + 30); // 30-38°C
+            ramUsage = Math.floor(Math.random() * 500 + 700);
+            cpuLoad = Math.floor(Math.random() * 25 + 20);
+        }
+        fpsSpan.innerText = baseFps;
+        tempSpan.innerText = baseTemp;
+        ramSpan.innerText = ramUsage + " MB";
+        cpuSpan.innerText = cpuLoad + "%";
+        let ramPercent = (ramUsage / 2400) * 100;
+        ramFill.style.width = Math.min(ramPercent, 100) + "%";
+        cpuFill.style.width = cpuLoad + "%";
+        if (floatActive) {
+            floatFps.innerText = baseFps + " FPS";
+            floatTemp.innerText = baseTemp + "°C";
+        }
+    }
+
+    // Game Booster: simulasi bersihkan RAM
+    function gameBooster() {
+        let notif = document.createElement('div');
+        notif.innerText = "🚀 GAME BOOSTER: RAM dibersihkan! Background apps dihentikan.";
+        notif.style.position = 'fixed'; notif.style.bottom='70px'; notif.style.left='20px'; notif.style.right='20px';
+        notif.style.background='#00aaffcc'; notif.style.padding='12px'; notif.style.borderRadius='30px'; notif.style.textAlign='center'; notif.style.zIndex='1000';
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 2000);
+        // efek performa
+        if(perfMode !== 'performance') {
+            setMode('performance');
+        }
+        updateStats();
+    }
+
+    // DND
+    function toggleDND() {
+        dndActive = !dndActive;
+        const btn = document.getElementById('dndBtn');
+        if(dndActive) {
+            btn.style.background = "#ff5555";
+            btn.innerText = "🔕 DND: ON";
+            alert("Mode Jangan Ganggu aktif: notifikasi dan panggilan akan diredam (simulasi).");
+        } else {
+            btn.style.background = "#335588";
+            btn.innerText = "🔕 DND";
+        }
+    }
+
+    // Floating widget
+    function toggleFloating() {
+        floatActive = !floatActive;
+        floatWidget.style.display = floatActive ? "flex" : "none";
+        if(floatActive) {
+            alert("Floating widget aktif. Izin overlay diperlukan jika jadi APK.");
+        }
+    }
+
+    // Mode performa
+    function setMode(mode) {
+        perfMode = mode;
+        document.getElementById('modePerf').classList.remove('active');
+        document.getElementById('modeBal').classList.remove('active');
+        document.getElementById('modeSave').classList.remove('active');
+        if(mode === 'performance') document.getElementById('modePerf').classList.add('active');
+        else if(mode === 'balanced') document.getElementById('modeBal').classList.add('active');
+        else document.getElementById('modeSave').classList.add('active');
+        updateStats();
+    }
+
+    // Scan game yang terinstall di HP (khusus jika dijalankan sebagai PWA/APK dengan izin)
+    async function scanInstalledGames() {
+        const container = document.getElementById('gameListContainer');
+        container.innerHTML = '<div style="text-align:center;">🔍 Mencari game...</div>';
+        try {
+            // Menggunakan navigator.getInstalledRelatedApps? tidak didukung. Kita akan berikan daftar game populer yang umum di HP.
+            // Karena tidak bisa akses package manager web, kita beri contoh game populer yang bisa diluncurkan.
+            const gameSamples = [
+                { name: "Mobile Legends", package: "com.mobile.legends", icon: "⚔️" },
+                { name: "Free Fire", package: "com.dts.freefireth", icon: "🔥" },
+                { name: "PUBG Mobile", package: "com.tencent.ig", icon: "🎯" },
+                { name: "Call of Duty", package: "com.activision.callofduty.shooter", icon: "🔫" },
+                { name: "Genshin Impact", package: "com.miHoYo.GenshinImpact", icon: "✨" },
+                { name: "Roblox", package: "com.roblox.client", icon: "🧩" }
+            ];
+            container.innerHTML = "";
+            for(let game of gameSamples) {
+                const div = document.createElement('div');
+                div.className = 'game-item';
+                div.innerHTML = `
+                    <div class="game-icon">${game.icon}</div>
+                    <div class="game-name">${game.name}</div>
+                    <button class="launch-btn" data-pkg="${game.package}">MAIN</button>
+                `;
+                container.appendChild(div);
+            }
+            // Pasang event listener untuk tombol launch
+            document.querySelectorAll('.launch-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const pkg = btn.getAttribute('data-pkg');
+                    launchGame(pkg);
+                });
+            });
+        } catch(e) {
+            container.innerHTML = '<div>Gagal scan game. Gunakan mode manual.</div>';
+        }
+    }
+
+    function launchGame(packageName) {
+        // Mencoba membuka game dengan intent URL
+        // Untuk aplikasi Android, kita bisa menggunakan intent: intent://
+        window.location.href = `intent://${packageName}#Intent;scheme=package;end`;
+        // fallback: buka play store jika tidak terinstall
+        setTimeout(() => {
+            window.open(`market://details?id=${packageName}`, '_blank');
+        }, 500);
+        alert(`Meluncurkan game: ${packageName}`);
+        if(perfMode !== 'performance') setMode('performance');
+    }
+
+    // Event listeners
+    document.getElementById('modePerf').onclick = () => setMode('performance');
+    document.getElementById('modeBal').onclick = () => setMode('balanced');
+    document.getElementById('modeSave').onclick = () => setMode('power_save');
+    document.getElementById('gameBoostBtn').onclick = gameBooster;
+    document.getElementById('dndBtn').onclick = toggleDND;
+    document.getElementById('floatBtn').onclick = toggleFloating;
+    document.getElementById('scanGames').onclick = scanInstalledGames;
+
+    // Mulai monitoring
+    setInterval(updateStats, 1000);
+    updateStats();
+    scanInstalledGames();
+</script>
+</body>
+</html>
